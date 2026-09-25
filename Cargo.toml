@@ -1,13 +1,13 @@
 [package]
 name = "harness-picker"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2024"
 description = "One fzf pick to start or resume a Claude Code, Codex or pi chat in the current folder"
 license = "MIT"
 repository = "https://github.com/devnull03/harness-picker"
 
 [[bin]]
-name = "ai"
+name = "hpick"
 path = "src/main.rs"
 
 [profile.release]

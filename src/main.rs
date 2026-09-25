@@ -34,8 +34,8 @@ fn main() {
 
     let mut fzf = Command::new("fzf")
         .args([
-            "--delimiter=\t", "--with-nth=3", "--no-sort", "--reverse", "--prompt=ai> ",
-            "--margin=20%,15%", "--border=rounded", "--border-label= ai ", "--padding=0,1", "--info=inline-right",
+            "--delimiter=\t", "--with-nth=3", "--no-sort", "--reverse", "--prompt=hpick> ",
+            "--margin=20%,15%", "--border=rounded", "--border-label= hpick ", "--padding=0,1", "--info=inline-right",
         ])
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
@@ -59,7 +59,7 @@ fn main() {
     #[cfg(unix)]
     {
         let err = std::os::unix::process::CommandExt::exec(&mut cmd);
-        eprintln!("ai: {program}: {err}");
+        eprintln!("hpick: {program}: {err}");
         std::process::exit(1);
     }
     #[cfg(windows)]
@@ -177,8 +177,8 @@ fn age(ms: u128) -> String {
     }
 }
 
-/// Windows has no exec, so `ai` stays the agent's parent. Ctrl+C reaches every process on the console;
-/// without this, `ai` would exit and hand the prompt back while the agent is still running. A handler (not a NULL ignore) so the agent doesn't inherit it.
+/// Windows has no exec, so `hpick` stays the agent's parent. Ctrl+C reaches every process on the console;
+/// without this, `hpick` would exit and hand the prompt back while the agent is still running. A handler (not a NULL ignore) so the agent doesn't inherit it.
 #[cfg(windows)]
 fn ignore_ctrl_c() {
     unsafe extern "system" {

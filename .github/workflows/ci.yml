@@ -11,9 +11,9 @@ jobs:
     strategy:
       matrix:
         include:
-          - { os: windows-latest, target: x86_64-pc-windows-msvc, asset: ai-windows-x86_64.exe }
-          - { os: ubuntu-latest, target: x86_64-unknown-linux-musl, asset: ai-linux-x86_64 }
-          - { os: macos-latest, target: aarch64-apple-darwin, asset: ai-macos-arm64 }
+          - { os: windows-latest, target: x86_64-pc-windows-msvc, asset: hpick-windows-x86_64.exe }
+          - { os: ubuntu-latest, target: x86_64-unknown-linux-musl, asset: hpick-linux-x86_64 }
+          - { os: macos-latest, target: aarch64-apple-darwin, asset: hpick-macos-arm64 }
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -24,7 +24,7 @@ jobs:
       - run: cargo test
       - run: cargo build --release --target ${{ matrix.target }}
       - shell: bash
-        run: cp target/${{ matrix.target }}/release/ai$([ "$RUNNER_OS" = Windows ] && echo .exe) ${{ matrix.asset }}
+        run: cp target/${{ matrix.target }}/release/hpick$([ "$RUNNER_OS" = Windows ] && echo .exe) ${{ matrix.asset }}
       - uses: actions/upload-artifact@v4
         with: { name: "${{ matrix.asset }}", path: "${{ matrix.asset }}" }
 
@@ -36,5 +36,5 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with: { merge-multiple: true }
-      - run: gh release create "$GITHUB_REF_NAME" ai-* --repo "$GITHUB_REPOSITORY" --generate-notes
+      - run: gh release create "$GITHUB_REF_NAME" hpick-* --repo "$GITHUB_REPOSITORY" --generate-notes
         env: { GH_TOKEN: "${{ github.token }}" }
