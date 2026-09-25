@@ -6,21 +6,34 @@ Made to be run from [Zed](https://zed.dev)'s terminal as a quick agent picker, b
 
 ![hpick](assets/screenshot.png)
 
-Needs [fzf](https://github.com/junegunn/fzf) 0.42+ (the package managers below install it) and whichever of `claude`, `codex`, `pi` you use.
-
 ## Install
 
+#### macOS · Linux
+
 ```sh
-brew install devnull03/tap/harness-picker        # macOS (Apple Silicon), Linux
+brew install devnull03/tap/harness-picker
 ```
+
+#### Windows
 
 ```powershell
 scoop bucket add devnull03 https://github.com/devnull03/scoop-bucket
-scoop install harness-picker                      # Windows
-winget install devnull03.HarnessPicker            # Windows
+scoop install harness-picker
 ```
 
-Or download a binary from [Releases](https://github.com/devnull03/harness-picker/releases/latest) and put it on your `PATH`, or `cargo install --git https://github.com/devnull03/harness-picker`.
+```powershell
+winget install devnull03.HarnessPicker
+```
+
+#### Manual
+
+Grab a binary from [Releases](https://github.com/devnull03/harness-picker/releases/latest), or build it:
+
+```sh
+cargo install --git https://github.com/devnull03/harness-picker
+```
+
+The package managers pull in [fzf](https://github.com/junegunn/fzf); install it yourself (0.42+) for a manual install. You also need whichever of `claude`, `codex`, `pi` you use.
 
 ## Use
 
