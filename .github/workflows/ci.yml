@@ -38,3 +38,36 @@ jobs:
         with: { merge-multiple: true }
       - run: gh release create "$GITHUB_REF_NAME" hpick-* --repo "$GITHUB_REPOSITORY" --generate-notes
         env: { GH_TOKEN: "${{ github.token }}" }
+
+  packages:
+    needs: release
+    runs-on: ubuntu-latest
+    env: { TOKEN: "${{ secrets.PACKAGES_TOKEN }}" }
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { merge-multiple: true }
+      - name: homebrew tap + scoop bucket
+        run: |
+          v=${GITHUB_REF_NAME#v}
+          sha() { sha256sum "$1" | cut -d' ' -f1; }
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git clone -q "https://x-access-token:$TOKEN@github.com/devnull03/homebrew-tap" tap
+          f=tap/Formula/harness-picker.rb
+          sed -i -E "s/[0-9]+\.[0-9]+\.[0-9]+/$v/g" $f
+          sed -i "/hpick-macos-arm64/{n;s/sha256 \".*\"/sha256 \"$(sha hpick-macos-arm64)\"/}" $f
+          sed -i "/hpick-linux-x86_64/{n;s/sha256 \".*\"/sha256 \"$(sha hpick-linux-x86_64)\"/}" $f
+          git -C tap commit -qam "harness-picker $v" && git -C tap push -q
+          git clone -q "https://x-access-token:$TOKEN@github.com/devnull03/scoop-bucket" bucket
+          j=bucket/bucket/harness-picker.json
+          jq --indent 4 --arg v "$v" --arg h "$(sha hpick-windows-x86_64.exe)" \
+            '.version = $v | .hash = $h | .url = (.autoupdate.url | split("$version") | join($v))' $j > tmp.json
+          mv tmp.json $j
+          git -C bucket commit -qam "harness-picker $v" && git -C bucket push -q
+      # ponytail: fails until devnull03.HarnessPicker's first version is merged into winget-pkgs
+      - uses: vedantmgoyal9/winget-releaser@v2
+        continue-on-error: true
+        with:
+          identifier: devnull03.HarnessPicker
+          installers-regex: 'hpick-windows-x86_64\.exe$'
+          token: ${{ secrets.PACKAGES_TOKEN }}
